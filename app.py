@@ -13,27 +13,7 @@ from utils import send_text_message
 load_dotenv()
 
 
-machine = TocMachine(
-    states=["user", "state1", "show_fsm"],
-    transitions=[
-        {
-            "trigger": "advance",
-            "source": "user",
-            "dest": "state1",
-            "conditions": "is_going_to_state1",
-        },
-        {
-            "trigger": "advance",
-            "source": "user",
-            "dest": "show_fsm",
-            "conditions": "is_going_to_show_fsm",
-        },
-        {"trigger": "go_back", "source": ["state1", "show_fsm"], "dest": "user"},
-    ],
-    initial="user",
-    auto_transitions=False,
-    show_conditions=True,
-)
+machine = {}
 
 app = Flask(__name__, static_url_path="")
 
@@ -94,15 +74,38 @@ def webhook_handler():
 
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
+        if event.source.user_id not in machine:
+            machine[event.source.user_id] = TocMachine(
+                states=["user", "state1", "show_fsm"],
+                transitions=[
+                    {
+                        "trigger": "advance",
+                        "source": "user",
+                        "dest": "state1",
+                        "conditions": "is_going_to_state1",
+                    },
+                    {
+                        "trigger": "advance",
+                        "source": "user",
+                        "dest": "show_fsm",
+                        "conditions": "is_going_to_show_fsm",
+                    },
+                    {"trigger": "go_back", "source": ["state1", "show_fsm"], "dest": "user"},
+                ],
+                initial="user",
+                auto_transitions=False,
+                show_conditions=True,
+            )
+
         if not isinstance(event, MessageEvent):
             continue
         if not isinstance(event.message, TextMessage):
             continue
         if not isinstance(event.message.text, str):
             continue
-        print(f"\nFSM STATE: {machine.state}")
-        print(f"REQUEST BODY: \n{body}")
-        response = machine.advance(event)
+        #print(f"\nFSM STATE: {machine.state}")
+        #print(f"REQUEST BODY: \n{body}")
+        response = machine[event.soure.user_id].advance(event)
         if response == False:
             send_text_message(event.reply_token, "Not Entering any State")
 
