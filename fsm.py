@@ -1,8 +1,6 @@
 from transitions.extensions import GraphMachine
-from dotenv import load_dotenv
 from utils import send_text_message
 
-load_dotenv()
 
 class TocMachine(GraphMachine):
     def __init__(self, **machine_configs):
