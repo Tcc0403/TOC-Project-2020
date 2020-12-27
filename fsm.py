@@ -8,11 +8,11 @@ class TocMachine(GraphMachine):
 
     def is_going_to_state1(self, event):
         text = event.message.text
-        return text.lower() == "go to state1"
+        return text == "go to state1"
 
-    def is_going_to_state2(self, event):
+    def is_going_to_show_fsm(self, event):
         text = event.message.text
-        return text.lower() == "fsm"
+        return text == "fsm"
 
     def on_enter_state1(self, event):
         print("I'm entering state1")
@@ -24,12 +24,12 @@ class TocMachine(GraphMachine):
     def on_exit_state1(self):
         print("Leaving state1")
 
-    def on_enter_state2(self, event):
+    def on_enter_show_fsm(self, event):
         print("I'm entering state2")
 
         reply_token = event.reply_token
         send_image_message(reply_token, 'https://https://line-bot-f74089046.herokuapp.com/show-fsm')
         self.go_back()
 
-    def on_exit_state2(self):
+    def on_exit_show_fsm(self):
         print("Leaving state2")
