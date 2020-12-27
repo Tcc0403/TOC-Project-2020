@@ -2,6 +2,7 @@ from transitions.extensions import GraphMachine
 
 from utils import send_text_message
 
+load_dotenv()
 
 class TocMachine(GraphMachine):
     def __init__(self, **machine_configs):
@@ -34,4 +35,3 @@ class TocMachine(GraphMachine):
 
     def on_exit_state2(self):
         print("Leaving state2")
-    
